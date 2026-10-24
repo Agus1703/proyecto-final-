@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cristiano Ronaldo | Página Interactiva de Agustina Escobar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #F5D76E;
+            --black: #0a0a0a;
+            --dark: #121212;
+            --card: #1a1a1a;
+            --white: #f5f5f5;
+            --red: #c8102e;
+            --gray: #888;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 64px;
+            background: rgba(10,10,10,0.96); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212,175,55,0.25);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; z-index: 1000;
+        }
+        .logo { font-family: 'Oswald', sans-serif; font-size: 1.7rem; font-weight: 700; color: var(--gold); letter-spacing: 2px; cursor: pointer; }
+        .logo span { color: var(--white); }
+        .user-badge {
+            background: linear-gradient(135deg, var(--gold), #b8860b);
+            color: #000; padding: 0.35rem 1rem; border-radius: 50px;
+            font-size: 0.8rem; font-weight: 700;
+        }
+        .app { display: flex; flex: 1; margin-top: 64px; min-height: calc(100vh - 64px); }
+        .sidebar {
+            width: 230px; background: var(--dark); border-right: 1px solid rgba(212,175,55,0.15);
+            padding: 1.2rem 0.7rem; display: flex; flex-direction: column; gap: 0.35rem;
+            position: fixed; top: 64px; bottom: 0; left: 0; z-index: 900;
+            transition: transform 0.3s ease; overflow-y: auto;
+        }
+        .nav-btn {
+            display: flex; align-items: center; gap: 0.8rem; padding: 0.85rem 1rem;
+            background: transparent; border: none; border-radius: 12px; color: var(--gray);
+            font-family: inherit; font-size: 0.92rem; font-weight: 600; cursor: pointer;
+            transition: var(--transition); text-align: left; width: 100%;
+        }
+        .nav-btn:hover { background: rgba(212,175,55,0.1); color: var(--gold-light); }
+        .nav-btn.active {
+            background: linear-gradient(135deg, rgba(212,175,55,0.22), rgba(212,175,55,0.08));
+            color: var(--gold); border-left: 3px solid var(--gold);
+        }
+        .nav-btn .icon { font-size: 1.25rem; width: 26px; text-align: center; }
+        .main {
+            flex: 1; margin-left: 230px; padding: 1.8rem; overflow-y: auto;
+            max-height: calc(100vh - 64px);
+        }
+        .panel { display: none; animation: fadeIn 0.35s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .panel-title {
+            font-family: 'Oswald', sans-serif; font-size: 2rem; margin-bottom: 1.3rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .panel-title::after {
+            content: ''; flex: 1; height: 2px;
+            background: linear-gradient(90deg, var(--gold), transparent); margin-left: 0.8rem;
+        }
+        .btn {
+            padding: 0.7rem 1.5rem; border: none; border-radius: 50px; font-weight: 700;
+            font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+            font-family: inherit; display: inline-flex; align-items: center; gap: 0.45rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), #b8860b); color: #000;
+            box-shadow: 0 4px 16px rgba(212,175,55,0.35);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(212,175,55,0.5); }
+        .btn-secondary { background: transparent; color: var(--gold); border: 2px solid var(--gold); }
+        .btn-secondary:hover { background: var(--gold); color: #000; }
+        .btn-sm { padding: 0.45rem 1rem; font-size: 0.85rem; }
+
+        /* HOME */
+        .hero-grid {
+            display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 2rem;
+            align-items: center; margin-bottom: 2rem;
+        }
+        .hero-text h1 {
+            font-family: 'Oswald', sans-serif; font-size: clamp(2.3rem, 5vw, 3.5rem);
+            line-height: 1.1; background: linear-gradient(135deg, #fff 30%, var(--gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.7rem;
+        }
+        .hero-text .tag { color: var(--gold); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 0.8rem; }
+        .hero-text p { color: var(--gray); margin-bottom: 1.3rem; max-width: 460px; }
+        .hero-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+        .hero-img { position: relative; text-align: center; }
+        .hero-img img {
+            width: 100%; max-width: 320px; border-radius: 18px;
+            border: 3px solid rgba(212,175,55,0.35); box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .floating {
+            position: absolute; bottom: 16px; left: 8px; background: var(--card);
+            border: 1px solid var(--gold); padding: 0.7rem 1.1rem; border-radius: 12px;
+            font-size: 0.85rem; animation: float 3s ease-in-out infinite;
+        }
+        .floating strong { color: var(--gold); font-size: 1.3rem; display: block; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+        .quick-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .qcard {
+            background: var(--card); border: 1px solid rgba(212,175,55,0.2); border-radius: 14px;
+            padding: 1.2rem 0.8rem; text-align: center; cursor: pointer; transition: var(--transition);
+        }
+        .qcard:hover { border-color: var(--gold); transform: translateY(-4px); }
+        .qcard .num { font-family: 'Oswald', sans-serif; font-size: 1.8rem; color: var(--gold); display: block; }
+        .qcard .lbl { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+
+        .fun-box {
+            background: var(--card); border-radius: 16px; padding: 1.4rem;
+            border: 1px solid rgba(212,175,55,0.2); margin-top: 1.5rem;
+        }
+        .fun-box h3 { color: var(--gold); margin-bottom: 0.8rem; font-family: 'Oswald', sans-serif; }
+        .fact-display {
+            min-height: 70px; background: var(--dark); border-radius: 12px; padding: 1rem;
+            margin: 0.8rem 0; color: #ddd; font-size: 0.95rem;
+        }
+
+        /* STATS */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: var(--card); border: 1px solid rgba(212,175,55,0.2); border-radius: 16px;
+            padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: var(--transition);
+        }
+        .stat-card:hover, .stat-card.open {
+            border-color: var(--gold); transform: translateY(-5px);
+            box-shadow: 0 10px 28px rgba(212,175,55,0.15);
+        }
+        .stat-card .num { font-family: 'Oswald', sans-serif; font-size: 2.3rem; color: var(--gold); display: block; }
+        .stat-card .lbl { font-size: 0.8rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.25rem; }
+        .stat-detail {
+            display: none; margin-top: 0.8rem; padding-top: 0.8rem;
+            border-top: 1px solid rgba(212,175,55,0.2); font-size: 0.85rem; color: #ccc;
+        }
+        .stat-card.open .stat-detail { display: block; }
+
+        /* BIO */
+        .bio-box {
+            background: var(--card); border-radius: 16px; padding: 1.5rem;
+            border: 1px solid rgba(212,175,55,0.15); margin-bottom: 1.2rem;
+        }
+        .bio-box h3 { color: var(--gold); margin-bottom: 0.8rem; font-family: 'Oswald', sans-serif; }
+        .bio-text { color: #ccc; max-height: 260px; overflow-y: auto; padding-right: 0.4rem; }
+        .bio-text::-webkit-scrollbar { width: 6px; }
+        .bio-text::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+        .api-note { font-size: 0.78rem; color: var(--gray); margin-top: 0.8rem; font-style: italic; }
+
+        /* DRAG */
+        .drag-area { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+        .drag-box, .drop-box {
+            background: var(--card); border-radius: 14px; padding: 1.1rem; min-height: 280px;
+            border: 2px dashed rgba(212,175,55,0.3);
+        }
+        .drop-box.over { border-color: var(--gold); background: rgba(212,175,55,0.08); }
+        .drag-box h4, .drop-box h4 { color: var(--gold); font-family: 'Oswald', sans-serif; margin-bottom: 0.8rem; font-size: 1.05rem; }
+        .trophy {
+            background: var(--dark); border: 1px solid rgba(212,175,55,0.25); padding: 0.7rem 0.9rem;
+            margin-bottom: 0.5rem; border-radius: 10px; cursor: grab; display: flex; align-items: center;
+            gap: 0.6rem; transition: var(--transition); user-select: none; font-size: 0.9rem;
+        }
+        .trophy:hover { border-color: var(--gold); transform: translateX(4px); }
+        .trophy.dragging { opacity: 0.4; cursor: grabbing; }
+        .order-msg { text-align: center; font-weight: 700; min-height: 1.3rem; margin-top: 0.8rem; }
+
+        /* QUIZ */
+        .quiz-card {
+            background: var(--card); border-radius: 18px; padding: 1.8rem;
+            border: 1px solid rgba(212,175,55,0.2); max-width: 620px;
+        }
+        .progress { height: 6px; background: #333; border-radius: 3px; margin-bottom: 1.2rem; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--gold), var(--red)); width: 0%; transition: width 0.4s; }
+        .q-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 1.1rem; }
+        .options { display: flex; flex-direction: column; gap: 0.6rem; }
+        .opt-btn {
+            background: var(--dark); border: 2px solid rgba(212,175,55,0.25); color: #fff;
+            padding: 0.85rem 1.1rem; border-radius: 11px; text-align: left; cursor: pointer;
+            font-family: inherit; font-size: 0.92rem; transition: var(--transition);
+        }
+        .opt-btn:hover:not(:disabled) { border-color: var(--gold); background: rgba(212,175,55,0.1); }
+        .opt-btn.correct { border-color: #2ecc71; background: rgba(46,204,113,0.15); }
+        .opt-btn.wrong { border-color: var(--red); background: rgba(200,16,46,0.15); }
+        .opt-btn:disabled { cursor: not-allowed; }
+        .feedback { margin-top: 1rem; font-weight: 600; min-height: 1.3rem; }
+        .score { color: var(--gold); margin-top: 0.5rem; }
+
+        /* CLIMA */
+        .cities {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.7rem;
+            margin-bottom: 1.2rem;
+        }
+        .city-btn {
+            background: var(--card); border: 2px solid rgba(212,175,55,0.25); color: #fff;
+            padding: 0.9rem 0.5rem; border-radius: 12px; cursor: pointer; font-family: inherit;
+            font-weight: 600; transition: var(--transition); display: flex; flex-direction: column;
+            align-items: center; gap: 0.25rem; font-size: 0.85rem;
+        }
+        .city-btn:hover, .city-btn.active {
+            border-color: var(--gold); background: rgba(212,175,55,0.12); transform: translateY(-3px);
+        }
+        .city-btn .flag { font-size: 1.5rem; }
+        .weather-box {
+            background: var(--card); border-radius: 16px; padding: 1.8rem;
+            border: 1px solid rgba(212,175,55,0.2); text-align: center; min-height: 150px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.35rem;
+        }
+        .weather-box .temp { font-family: 'Oswald', sans-serif; font-size: 3rem; color: var(--gold); }
+        .weather-box .cname { font-size: 1.2rem; font-weight: 700; }
+        .loading { color: var(--gold); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.4; } }
+
+        /* MEMORY */
+        .memory-board {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem;
+            max-width: 480px; margin: 0 auto 1.2rem;
+        }
+        .memory-card {
+            aspect-ratio: 1; background: var(--card); border: 2px solid rgba(212,175,55,0.3);
+            border-radius: 12px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; font-size: 1.8rem; transition: var(--transition);
+            user-select: none;
+        }
+        .memory-card:hover:not(.flipped):not(.matched) { border-color: var(--gold); transform: scale(1.04); }
+        .memory-card.flipped, .memory-card.matched {
+            background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.1));
+            border-color: var(--gold);
+        }
+        .memory-card.matched { opacity: 0.7; cursor: default; }
+        .memory-info { text-align: center; margin-bottom: 1rem; color: var(--gray); }
+
+        /* CLICKER */
+        .clicker-box {
+            background: var(--card); border-radius: 18px; padding: 2rem; text-align: center;
+            border: 1px solid rgba(212,175,55,0.2); max-width: 400px; margin: 0 auto;
+        }
+        .clicker-count {
+            font-family: 'Oswald', sans-serif; font-size: 4rem; color: var(--gold);
+            margin: 0.5rem 0;
+        }
+        .siuu-btn {
+            width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--gold);
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a); color: var(--gold);
+            font-size: 2.5rem; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 0 30px rgba(212,175,55,0.2);
+        }
+        .siuu-btn:active { transform: scale(0.92); }
+        .siuu-btn:hover { box-shadow: 0 0 40px rgba(212,175,55,0.4); }
+
+        /* GALLERY */
+        .gallery {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.9rem;
+        }
+        .g-item {
+            position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4/3;
+            cursor: pointer; border: 2px solid transparent; transition: var(--transition);
+        }
+        .g-item:hover { border-color: var(--gold); transform: scale(1.03); }
+        .g-item img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+        .g-item:hover img { transform: scale(1.07); }
+        .g-item .cap {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.88));
+            padding: 1.1rem 0.7rem 0.5rem; font-size: 0.8rem; font-weight: 600;
+            opacity: 0; transition: var(--transition);
+        }
+        .g-item:hover .cap { opacity: 1; }
+
+        .lightbox {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93);
+            z-index: 2000; justify-content: center; align-items: center; cursor: zoom-out;
+        }
+        .lightbox.on { display: flex; }
+        .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 12px; border: 3px solid var(--gold); }
+
+        .menu-toggle { display: none; background: none; border: none; color: var(--gold); font-size: 1.6rem; cursor: pointer; }
+
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; padding: 1.1rem; }
+            .menu-toggle { display: block; }
+            .hero-grid { grid-template-columns: 1fr; text-align: center; }
+            .hero-text p { margin: 0 auto 1.3rem; }
+            .hero-actions { justify-content: center; }
+            .drag-area { grid-template-columns: 1fr; }
+            .user-badge { display: none; }
+            .memory-board { grid-template-columns: repeat(3, 1fr); }
+        }
+        :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div style="display:flex;align-items:center;gap:1rem;">
+            <button class="menu-toggle" id="menuToggle" aria-label="Menú">☰</button>
+            <div class="logo" id="goHome">CR<span>7</span></div>
+        </div>
+        <div class="user-badge">Agustina Escobar</div>
+    </div>
+
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <button class="nav-btn active" data-panel="home"><span class="icon">🏠</span> Inicio</button>
+            <button class="nav-btn" data-panel="stats"><span class="icon">📊</span> Estadísticas</button>
+            <button class="nav-btn" data-panel="bio"><span class="icon">📖</span> Biografía</button>
+            <button class="nav-btn" data-panel="logros"><span class="icon">🏆</span> Ordenar Logros</button>
+            <button class="nav-btn" data-panel="quiz"><span class="icon">❓</span> Quiz CR7</button>
+            <button class="nav-btn" data-panel="memory"><span class="icon">🧠</span> Memoria</button>
+            <button class="nav-btn" data-panel="clicker"><span class="icon">💥</span> SIUUU Clicker</button>
+            <button class="nav-btn" data-panel="clima"><span class="icon">🌤️</span> Clima</button>
+            <button class="nav-btn" data-panel="galeria"><span class="icon">🖼️</span> Galería</button>
+        </aside>
+
+        <main class="main" id="main">
+            <!-- HOME -->
+            <div class="panel active" id="panel-home">
+                <div class="hero-grid">
+                    <div class="hero-text">
+                        <p class="tag">La Leyenda del Fútbol</p>
+                        <h1>CRISTIANO RONALDO</h1>
+                        <p>El máximo goleador de la historia. 5 Balones de Oro, 5 Champions y un legado eterno. ¡Interactúa con todo!</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" data-goto="stats">📊 Estadísticas</button>
+                            <button class="btn btn-secondary" data-goto="quiz">❓ Quiz</button>
+                            <button class="btn btn-secondary" data-goto="memory">🧠 Memoria</button>
+                            <button class="btn btn-secondary" data-goto="clicker">💥 SIUUU</button>
+                        </div>
+                    </div>
+                    <div class="hero-img">
+                        <img src="ronaldo-portrait.jpg" alt="Cristiano Ronaldo"
+                             onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg'">
+                        <div class="floating"><strong>982+</strong> Goles</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom:0.9rem;color:var(--gold);font-family:'Oswald',sans-serif;">Accesos rápidos</h3>
+                <div class="quick-grid">
+                    <div class="qcard" data-goto="stats"><span class="num">5</span><span class="lbl">Balones de Oro</span></div>
+                    <div class="qcard" data-goto="stats"><span class="num">5</span><span class="lbl">Champions</span></div>
+                    <div class="qcard" data-goto="logros"><span class="num">7</span><span class="lbl">Logros ordenables</span></div>
+                    <div class="qcard" data-goto="memory"><span class="num">8</span><span class="lbl">Cartas memoria</span></div>
+                    <div class="qcard" data-goto="clima"><span class="num">6</span><span class="lbl">Ciudades clima</span></div>
+                    <div class="qcard" data-goto="quiz"><span class="num">5</span><span class="lbl">Preguntas quiz</span></div>
+                </div>
+
+                <div class="fun-box">
+                    <h3>🎲 Dato aleatorio de CR7</h3>
+                    <div class="fact-display" id="factDisplay">Pulsa el botón para descubrir un dato curioso...</div>
+                    <button class="btn btn-primary" id="randomFactBtn">Mostrar dato aleatorio</button>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <div class="panel" id="panel-stats">
+                <h2 class="panel-title">📊 Estadísticas</h2>
+                <p style="color:var(--gray);margin-bottom:1.2rem;">Haz clic en cualquier tarjeta para ver más detalles.</p>
+                <div class="stats-grid">
+                    <div class="stat-card" data-detail="Récord histórico de goles oficiales de club + selección (datos 2026).">
+                        <span class="num" data-target="982">0</span><span class="lbl">Goles Oficiales</span>
+                        <div class="stat-detail"></div>
+                    </div>
+                    <div class="stat-card" data-detail="2008, 2013, 2014, 2016 y 2017. El europeo con más Balones de Oro.">
+                        <span class="num" data-target="5">0</span><span class="lbl">Balones de Oro</span>
+                        <div class="stat-detail"></div>
+                    </div>
+                    <div class="stat-card" data-detail="1 con Man United + 4 con Real Madrid. Máximo goleador histórico (140).">
+                        <span class="num" data-target="5">0</span><span class="lbl">Champions League</span>
+                        <div class="stat-detail"></div>
+                    </div>
+                    <div class="stat-card" data-detail="Ligas, copas, Super Cups, Club World Cup, Euro y Nations League.">
+                        <span class="num" data-target="35">0</span><span class="lbl">Títulos de Equipo</span>
+                        <div class="stat-detail"></div>
+                    </div>
+                    <div class="stat-card" data-detail="Máximo goleador histórico de Portugal y de las Eurocopas.">
+                        <span class="num" data-target="146">0</span><span class="lbl">Goles con Portugal</span>
+                        <div class="stat-detail"></div>
+                    </div>
+                    <div class="stat-card" data-detail="Más de 1300 partidos oficiales. Uno de los tres en superar esa marca.">
+                        <span class="num" data-target="1342">0</span><span class="lbl">Partidos Oficiales</span>
+                        <div class="stat-detail"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" data-goto="home">← Volver al Inicio</button>
+            </div>
+
+            <!-- BIO -->
+            <div class="panel" id="panel-bio">
+                <h2 class="panel-title">📖 Biografía</h2>
+                <div class="bio-box">
+                    <h3>¿Quién es Cristiano Ronaldo?</h3>
+                    <div class="bio-text" id="bioText">Cargando biografía desde Wikipedia...</div>
+                    <div style="margin-top:1rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-sm" id="reloadBio">🔄 Actualizar Wikipedia</button>
+                        <button class="btn btn-secondary btn-sm" data-goto="home">← Inicio</button>
+                    </div>
+                    <p class="api-note" id="bioStatus">Fuente: Wikipedia REST API</p>
+                </div>
+                <div style="text-align:center;margin-top:1rem;">
+                    <img src="ronaldo-ballon.jpg" alt="Balón de Oro" style="max-width:280px;border-radius:14px;border:2px solid rgba(212,175,55,0.3);"
+                         onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/33/C._Ronaldo_-_Ballon_d%27Or_2014.jpg'">
+                </div>
+            </div>
+
+            <!-- LOGROS -->
+            <div class="panel" id="panel-logros">
+                <h2 class="panel-title">🏆 Ordena los Logros</h2>
+                <p style="color:var(--gray);margin-bottom:1rem;">Arrastra los trofeos a la derecha y ordénalos del más antiguo al más reciente.</p>
+                <div class="drag-area">
+                    <div class="drag-box" id="dragList"><h4>🏆 Disponibles</h4></div>
+                    <div class="drop-box" id="dropZone"><h4>📅 Orden cronológico</h4></div>
+                </div>
+                <div style="display:flex;gap:0.7rem;flex-wrap:wrap;">
+                    <button class="btn btn-primary" id="checkOrder">Verificar Orden</button>
+                    <button class="btn btn-secondary" id="resetDrag">Reiniciar</button>
+                    <button class="btn btn-secondary" data-goto="home">← Inicio</button>
+                </div>
+                <div class="order-msg" id="orderResult"></div>
+            </div>
+
+            <!-- QUIZ -->
+            <div class="panel" id="panel-quiz">
+                <h2 class="panel-title">❓ Quiz CR7</h2>
+                <div class="quiz-card">
+                    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+                    <p class="q-text" id="questionText">¡Prepárate!</p>
+                    <div class="options" id="options"></div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="score" id="scoreDisplay"></div>
+                    <div style="margin-top:1.2rem;display:flex;gap:0.7rem;flex-wrap:wrap;">
+                        <button class="btn btn-primary" id="nextBtn" style="display:none;">Siguiente</button>
+                        <button class="btn btn-secondary" id="restartQuiz" style="display:none;">Reiniciar Quiz</button>
+                        <button class="btn btn-secondary" data-goto="home">← Inicio</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEMORY -->
+            <div class="panel" id="panel-memory">
+                <h2 class="panel-title">🧠 Juego de Memoria CR7</h2>
+                <p class="memory-info">Encuentra las parejas. Movimientos: <strong id="moves">0</strong> | Parejas: <strong id="pairs">0</strong>/8</p>
+                <div class="memory-board" id="memoryBoard"></div>
+                <div style="text-align:center;display:flex;gap:0.7rem;justify-content:center;flex-wrap:wrap;">
+                    <button class="btn btn-primary" id="resetMemory">Reiniciar Juego</button>
+                    <button class="btn btn-secondary" data-goto="home">← Inicio</button>
+                </div>
+            </div>
+
+            <!-- CLICKER -->
+            <div class="panel" id="panel-clicker">
+                <h2 class="panel-title">💥 SIUUU Clicker</h2>
+                <div class="clicker-box">
+                    <p style="color:var(--gray);">¡Haz clic lo más rápido que puedas!</p>
+                    <div class="clicker-count" id="clickCount">0</div>
+                    <p style="margin-bottom:1.2rem;color:var(--gold);font-weight:700;" id="siuuText">¡SIUUU!</p>
+                    <button class="siuu-btn" id="siuuBtn">⚽</button>
+                    <div style="margin-top:1.5rem;display:flex;gap:0.7rem;justify-content:center;flex-wrap:wrap;">
+                        <button class="btn btn-secondary btn-sm" id="resetClicks">Reiniciar</button>
+                        <button class="btn btn-secondary btn-sm" data-goto="home">← Inicio</button>
+                    </div>
+                    <p style="margin-top:1rem;font-size:0.85rem;color:var(--gray);" id="clickRecord">Récord: 0</p>
+                </div>
+            </div>
+
+            <!-- CLIMA -->
+            <div class="panel" id="panel-clima">
+                <h2 class="panel-title">🌤️ Clima en las Ciudades de CR7</h2>
+                <p style="color:var(--gray);margin-bottom:1rem;">Elige una ciudad (API Open-Meteo – gratuita).</p>
+                <div class="cities">
+                    <button class="city-btn" data-lat="32.65" data-lon="-16.91" data-name="Funchal (Madeira)"><span class="flag">🇵🇹</span> Funchal</button>
+                    <button class="city-btn" data-lat="38.72" data-lon="-9.14" data-name="Lisboa"><span class="flag">🇵🇹</span> Lisboa</button>
+                    <button class="city-btn" data-lat="53.48" data-lon="-2.24" data-name="Manchester"><span class="flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span> Manchester</button>
+                    <button class="city-btn" data-lat="40.42" data-lon="-3.70" data-name="Madrid"><span class="flag">🇪🇸</span> Madrid</button>
+                    <button class="city-btn" data-lat="45.07" data-lon="7.69" data-name="Turín"><span class="flag">🇮🇹</span> Turín</button>
+                    <button class="city-btn" data-lat="24.71" data-lon="46.68" data-name="Riad (Al-Nassr)"><span class="flag">🇸🇦</span> Riad</button>
+                </div>
+                <div class="weather-box" id="weatherResult"><p>Selecciona una ciudad</p></div>
+                <button class="btn btn-secondary" style="margin-top:1.2rem;" data-goto="home">← Inicio</button>
+            </div>
+
+            <!-- GALERÍA -->
+            <div class="panel" id="panel-galeria">
+                <h2 class="panel-title">🖼️ Galería</h2>
+                <p style="color:var(--gray);margin-bottom:1rem;">Haz clic en cualquier foto para ampliarla.</p>
+                <div class="gallery">
+                    <div class="g-item" data-full="ronaldo-portrait.jpg">
+                        <img src="ronaldo-portrait.jpg" alt="Retrato" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg'">
+                        <div class="cap">Cristiano Ronaldo</div>
+                    </div>
+                    <div class="g-item" data-full="ronaldo-ballon.jpg">
+                        <img src="ronaldo-ballon.jpg" alt="Balón de Oro" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/3/33/C._Ronaldo_-_Ballon_d%27Or_2014.jpg'">
+                        <div class="cap">Balón de Oro 2014</div>
+                    </div>
+                    <div class="g-item" data-full="ronaldo-alnassr.jpg">
+                        <img src="ronaldo-alnassr.jpg" alt="Al-Nassr" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/d/d7/Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg'">
+                        <div class="cap">Al-Nassr 2023</div>
+                    </div>
+                    <div class="g-item" data-full="ronaldo-small1.jpg">
+                        <img src="ronaldo-small1.jpg" alt="CR7" onerror="this.src='ronaldo-portrait.jpg'">
+                        <div class="cap">El fenómeno</div>
+                    </div>
+                    <div class="g-item" data-full="ronaldo-small2.jpg">
+                        <img src="ronaldo-small2.jpg" alt="Balón" onerror="this.src='ronaldo-ballon.jpg'">
+                        <div class="cap">Con el Balón de Oro</div>
+                    </div>
+                    <div class="g-item" data-full="ronaldo1.jpg">
+                        <img src="ronaldo1.jpg" alt="2018" onerror="this.src='ronaldo-portrait.jpg'">
+                        <div class="cap">2018</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="margin-top:1.2rem;" data-goto="home">← Inicio</button>
+            </div>
+        </main>
+    </div>
+
+    <div class="lightbox" id="lightbox"><img src="" alt="Ampliada" id="lightboxImg"></div>
+
+    <script>
+        // ========== NAV ==========
+        const panels = document.querySelectorAll('.panel');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        function showPanel(id) {
+            panels.forEach(p => p.classList.remove('active'));
+            navBtns.forEach(b => b.classList.remove('active'));
+            const panel = document.getElementById('panel-' + id);
+            if (panel) { panel.classList.add('active'); document.getElementById('main').scrollTop = 0; }
+            const btn = document.querySelector(`.nav-btn[data-panel="${id}"]`);
+            if (btn) btn.classList.add('active');
+            sidebar.classList.remove('open');
+            if (id === 'stats') animateStats();
+            if (id === 'memory') initMemory();
+        }
+
+        navBtns.forEach(btn => btn.addEventListener('click', () => showPanel(btn.dataset.panel)));
+        document.querySelectorAll('[data-goto]').forEach(el => el.addEventListener('click', () => showPanel(el.dataset.goto)));
+        document.getElementById('goHome').addEventListener('click', () => showPanel('home'));
+        document.getElementById('menuToggle').addEventListener('click', () => sidebar.classList.toggle('open'));
+
+        // ========== RANDOM FACTS ==========
+        const facts = [
+            "Cristiano Ronaldo es el único jugador que ha marcado en 5 ediciones diferentes de la Copa del Mundo.",
+            "Tiene el récord de más goles en la historia de la Champions League (140).",
+            "Fue el primer jugador en marcar en 6 Mundiales diferentes (incluyendo 2022).",
+            "Ha ganado la European Golden Shoe en 4 ocasiones.",
+            "Su salto vertical alcanza casi 80 cm, uno de los más altos del fútbol.",
+            "Es el máximo goleador histórico de la selección portuguesa con 146 goles.",
+            "Ha marcado más de 50 goles en una temporada en 9 ocasiones diferentes.",
+            "El grito 'SIUUU' se popularizó después de un gol de chilena en 2018.",
+            "Es uno de los pocos jugadores en ganar la liga en Inglaterra, España e Italia.",
+            "Tiene su propio museo en Funchal, Madeira, llamado 'CR7 Museum'."
+        ];
+        document.getElementById('randomFactBtn').addEventListener('click', () => {
+            const f = facts[Math.floor(Math.random() * facts.length)];
+            document.getElementById('factDisplay').textContent = f;
+        });
+
+        // ========== STATS ==========
+        let statsAnimated = false;
+        function animateStats() {
+            if (statsAnimated) return;
+            statsAnimated = true;
+            document.querySelectorAll('.stat-card .num').forEach(el => {
+                const target = +el.dataset.target;
+                let cur = 0;
+                const step = target / 50;
+                const t = setInterval(() => {
+                    cur += step;
+                    if (cur >= target) { el.textContent = target.toLocaleString('es'); clearInterval(t); }
+                    else el.textContent = Math.floor(cur).toLocaleString('es');
+                }, 25);
+            });
+        }
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const detail = card.querySelector('.stat-detail');
+                if (card.classList.contains('open')) {
+                    card.classList.remove('open'); detail.textContent = '';
+                } else {
+                    document.querySelectorAll('.stat-card').forEach(c => { c.classList.remove('open'); c.querySelector('.stat-detail').textContent = ''; });
+                    card.classList.add('open');
+                    detail.textContent = card.dataset.detail;
+                }
+            });
+        });
+
+        // ========== BIO ==========
+        async function loadBio() {
+            const bioText = document.getElementById('bioText');
+            const status = document.getElementById('bioStatus');
+            bioText.innerHTML = '<span class="loading">Cargando Wikipedia...</span>';
+            try {
+                let res = await fetch('https://es.wikipedia.org/api/rest_v1/page/summary/Cristiano_Ronaldo');
+                if (!res.ok) res = await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/Cristiano_Ronaldo');
+                const data = await res.json();
+                bioText.innerHTML = data.extract || data.description || 'No disponible.';
+                status.textContent = `Fuente: Wikipedia • ${new Date().toLocaleString('es')}`;
+            } catch {
+                bioText.innerHTML = 'Cristiano Ronaldo dos Santos Aveiro (Funchal, 5 de febrero de 1985) es un futbolista portugués que juega en Al-Nassr y es capitán de Portugal. Ha ganado 5 Balones de Oro y es el máximo goleador oficial de la historia del fútbol.';
+                status.textContent = 'Fuente: datos locales';
+            }
+        }
+        loadBio();
+        document.getElementById('reloadBio').addEventListener('click', loadBio);
+
+        // ========== DRAG & DROP ==========
+        const trophies = [
+            { year: 2008, text: "Primer Balón de Oro (2008)", icon: "🥇" },
+            { year: 2009, text: "Llega al Real Madrid (2009)", icon: "⚪" },
+            { year: 2014, text: "La Décima + Balón de Oro (2014)", icon: "🏆" },
+            { year: 2016, text: "Eurocopa con Portugal (2016)", icon: "🇵🇹" },
+            { year: 2017, text: "5º Balón de Oro (2017)", icon: "⭐" },
+            { year: 2018, text: "Ficha por la Juventus (2018)", icon: "⚫" },
+            { year: 2023, text: "Ficha por Al-Nassr (2023)", icon: "🟡" }
+        ];
+        const dragList = document.getElementById('dragList');
+        const dropZone = document.getElementById('dropZone');
+        let dragged = null;
+
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+        function renderTrophies() {
+            dragList.innerHTML = '<h4>🏆 Disponibles</h4>';
+            dropZone.innerHTML = '<h4>📅 Orden cronológico</h4>';
+            shuffle(trophies).forEach(t => dragList.appendChild(createTrophy(t)));
+            document.getElementById('orderResult').textContent = '';
+        }
+        function createTrophy(t) {
+            const div = document.createElement('div');
+            div.className = 'trophy'; div.draggable = true; div.dataset.year = t.year;
+            div.innerHTML = `<span>${t.icon}</span> ${t.text}`;
+            div.addEventListener('dragstart', e => { dragged = div; div.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+            div.addEventListener('dragend', () => { div.classList.remove('dragging'); dragged = null; });
+            return div;
+        }
+        [dragList, dropZone].forEach(zone => {
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault(); zone.classList.remove('over');
+                if (dragged && zone !== dragged.parentElement) zone.appendChild(dragged);
+            });
+        });
+        renderTrophies();
+        document.getElementById('resetDrag').addEventListener('click', renderTrophies);
+        document.getElementById('checkOrder').addEventListener('click', () => {
+            const items = [...dropZone.querySelectorAll('.trophy')];
+            const result = document.getElementById('orderResult');
+            if (items.length !== trophies.length) {
+                result.textContent = '⚠️ Coloca todos los trofeos.'; result.style.color = '#f39c12'; return;
+            }
+            const years = items.map(i => +i.dataset.year);
+            const sorted = [...years].sort((a,b) => a-b);
+            const ok = years.every((y,i) => y === sorted[i]);
+            result.textContent = ok ? '🎉 ¡Perfecto! Orden correcto.' : '❌ Revisa el orden de los años.';
+            result.style.color = ok ? '#2ecc71' : 'var(--red)';
+        });
+
+        // ========== QUIZ ==========
+        const questions = [
+            { q: "¿En qué año nació Cristiano Ronaldo?", options: ["1983","1985","1987","1984"], correct: 1 },
+            { q: "¿Cuántos Balones de Oro ha ganado?", options: ["3","4","5","6"], correct: 2 },
+            { q: "¿Con qué club ganó su primera Champions?", options: ["Real Madrid","Manchester United","Juventus","Sporting"], correct: 1 },
+            { q: "¿Récord de goles en una temporada de Champions?", options: ["15","16","17","14"], correct: 2 },
+            { q: "¿En qué ciudad nació?", options: ["Lisboa","Oporto","Funchal","Braga"], correct: 2 }
+        ];
+        let currentQ = 0, score = 0, answered = false;
+        const qText = document.getElementById('questionText');
+        const opts = document.getElementById('options');
+        const feedback = document.getElementById('feedback');
+        const scoreEl = document.getElementById('scoreDisplay');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartQuiz');
+        const bar = document.getElementById('progressBar');
+
+        function loadQ() {
+            answered = false; nextBtn.style.display = 'none'; feedback.textContent = '';
+            const q = questions[currentQ];
+            qText.textContent = `${currentQ+1}. ${q.q}`;
+            opts.innerHTML = '';
+            q.options.forEach((o,i) => {
+                const b = document.createElement('button');
+                b.className = 'opt-btn'; b.textContent = o;
+                b.onclick = () => select(i, b);
+                opts.appendChild(b);
+            });
+            bar.style.width = `${(currentQ / questions.length)*100}%`;
+            scoreEl.textContent = `Puntuación: ${score} / ${questions.length}`;
+        }
+        function select(i, btn) {
+            if (answered) return; answered = true;
+            const q = questions[currentQ];
+            opts.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+            if (i === q.correct) {
+                btn.classList.add('correct'); feedback.textContent = '✅ ¡Correcto!'; feedback.style.color = '#2ecc71'; score++;
+            } else {
+                btn.classList.add('wrong'); opts.children[q.correct].classList.add('correct');
+                feedback.textContent = '❌ Incorrecto'; feedback.style.color = 'var(--red)';
+            }
+            scoreEl.textContent = `Puntuación: ${score} / ${questions.length}`;
+            nextBtn.style.display = 'inline-flex';
+            nextBtn.textContent = currentQ === questions.length-1 ? 'Ver Resultado' : 'Siguiente';
+        }
+        nextBtn.addEventListener('click', () => {
+            currentQ++;
+            if (currentQ < questions.length) loadQ();
+            else {
+                bar.style.width = '100%'; qText.textContent = '¡Quiz terminado!'; opts.innerHTML = '';
+                const pct = Math.round(score/questions.length*100);
+                let msg = pct===100 ? '🏆 ¡Perfecto!' : pct>=60 ? '👏 ¡Muy bien!' : '📚 Sigue practicando.';
+                feedback.innerHTML = `<strong style="font-size:1.25rem;color:var(--gold)">${score} de ${questions.length}</strong><br>${msg}`;
+                nextBtn.style.display = 'none'; restartBtn.style.display = 'inline-flex';
+                const prev = localStorage.getItem('cr7_high') || 0;
+                if (score > prev) { localStorage.setItem('cr7_high', score); scoreEl.textContent = `¡Nuevo récord! ${score}`; }
+                else scoreEl.textContent = `Récord: ${prev} | Actual: ${score}`;
+            }
+        });
+        restartBtn.addEventListener('click', () => { currentQ=0; score=0; restartBtn.style.display='none'; loadQ(); });
+        loadQ();
+
+        // ========== MEMORY GAME ==========
+        const symbols = ['⚽','🏆','🥇','🇵🇹','⭐','🔥','👑','💪'];
+        let memCards = [], flipped = [], matched = 0, moves = 0, lock = false;
+
+        function initMemory() {
+            const board = document.getElementById('memoryBoard');
+            board.innerHTML = '';
+            memCards = shuffle([...symbols, ...symbols]);
+            flipped = []; matched = 0; moves = 0; lock = false;
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('pairs').textContent = '0';
+            memCards.forEach((sym, i) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.symbol = sym;
+                card.dataset.index = i;
+                card.textContent = '?';
+                card.addEventListener('click', () => flipCard(card));
+                board.appendChild(card);
+            });
+        }
+        function flipCard(card) {
+            if (lock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            card.classList.add('flipped');
+            card.textContent = card.dataset.symbol;
+            flipped.push(card);
+            if (flipped.length === 2) {
+                moves++; document.getElementById('moves').textContent = moves;
+                lock = true;
+                if (flipped[0].dataset.symbol === flipped[1].dataset.symbol) {
+                    flipped.forEach(c => c.classList.add('matched'));
+                    matched++; document.getElementById('pairs').textContent = matched;
+                    flipped = []; lock = false;
+                    if (matched === 8) setTimeout(() => alert('🎉 ¡Ganaste el juego de memoria!'), 300);
+                } else {
+                    setTimeout(() => {
+                        flipped.forEach(c => { c.classList.remove('flipped'); c.textContent = '?'; });
+                        flipped = []; lock = false;
+                    }, 800);
+                }
+            }
+        }
+        document.getElementById('resetMemory').addEventListener('click', initMemory);
+
+        // ========== SIUUU CLICKER ==========
+        let clicks = 0;
+        const clickCount = document.getElementById('clickCount');
+        const siuuText = document.getElementById('siuuText');
+        const siuuBtn = document.getElementById('siuuBtn');
+        const clickRecord = document.getElementById('clickRecord');
+        let record = +(localStorage.getItem('cr7_clicks') || 0);
+        clickRecord.textContent = `Récord: ${record}`;
+
+        siuuBtn.addEventListener('click', () => {
+            clicks++;
+            clickCount.textContent = clicks;
+            const texts = ['¡SIUUU!','¡GOL!','¡CR7!','¡Vamos!','¡Leyenda!','¡Imparable!'];
+            siuuText.textContent = texts[Math.floor(Math.random()*texts.length)];
+            if (clicks > record) {
+                record = clicks;
+                localStorage.setItem('cr7_clicks', record);
+                clickRecord.textContent = `¡Nuevo récord! ${record}`;
+            }
+        });
+        document.getElementById('resetClicks').addEventListener('click', () => {
+            clicks = 0; clickCount.textContent = '0'; siuuText.textContent = '¡SIUUU!';
+        });
+
+        // ========== WEATHER ==========
+        const weatherCodes = {
+            0:'Despejado ☀️',1:'Principalmente despejado 🌤️',2:'Parcialmente nublado ⛅',3:'Nublado ☁️',
+            45:'Niebla 🌫️',51:'Llovizna 🌦️',61:'Lluvia ligera 🌧️',63:'Lluvia 🌧️',65:'Lluvia intensa ⛈️',
+            71:'Nieve ❄️',80:'Chubascos 🌦️',95:'Tormenta ⛈️'
+        };
+        document.querySelectorAll('.city-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const box = document.getElementById('weatherResult');
+                box.innerHTML = '<p class="loading">Consultando Open-Meteo...</p>';
+                try {
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${btn.dataset.lat}&longitude=${btn.dataset.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    const c = data.current;
+                    const desc = weatherCodes[c.weather_code] || `Código ${c.weather_code}`;
+                    box.innerHTML = `
+                        <div class="cname">${btn.dataset.name}</div>
+                        <div class="temp">${Math.round(c.temperature_2m)}°C</div>
+                        <div>${desc}</div>
+                        <div style="color:var(--gray);font-size:0.9rem;">💧 ${c.relative_humidity_2m}% · 💨 ${c.wind_speed_10m} km/h</div>
+                    `;
+                } catch { box.innerHTML = '<p style="color:var(--red)">Error al obtener el clima.</p>'; }
+            });
+        });
+
+        // ========== GALLERY ==========
+        const lb = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightboxImg');
+        document.querySelectorAll('.g-item').forEach(item => {
+            item.addEventListener('click', () => {
+                lbImg.src = item.dataset.full || item.querySelector('img').src;
+                lb.classList.add('on');
+            });
+        });
+        lb.addEventListener('click', () => lb.classList.remove('on'));
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') { lb.classList.remove('on'); sidebar.classList.remove('open'); }
+        });
+    </script>
+</body>
+</html>
